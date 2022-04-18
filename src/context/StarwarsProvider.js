@@ -28,29 +28,29 @@ function Provider({ children }) {
 
   const handleClick = (filter) => {
     // console.log(parseInt(data[0][filter.column]));
-    // let newData = {};
+    let newData = {};
     switch (filter.comparison) {
     case 'menor que': {
-      const newData = data.filter((planet) => (
+      newData = data.filter((planet) => (
         parseInt(planet[filter.column], 10) < parseInt(filter.value, 10)));
-      setRenderData(newData);
+      // setRenderData(newData);
       break;
     }
     case 'maior que': {
-      const newData = data.filter((planet) => (
+      newData = data.filter((planet) => (
         parseInt(planet[filter.column], 10) > parseInt(filter.value, 10)));
-      setRenderData(newData);
+      // setRenderData(newData);
       break;
     }
     case 'igual a': {
-      const newData = data.filter((planet) => planet[filter.column] === filter.value);
-      setRenderData(newData);
+      newData = data.filter((planet) => planet[filter.column] === filter.value);
+      // setRenderData(newData);
       break;
     }
     default:
       console.log('Erro');
     }
-    // setRenderData(newData);
+    setRenderData(newData);
   };
 
   return (
