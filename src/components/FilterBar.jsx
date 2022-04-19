@@ -10,10 +10,22 @@ function FilterBar() {
     comparison: 'maior que',
     value: 0,
   });
+  const [options, setOptions] = useState([
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water']);
 
   const handleChange = ({ target }) => {
     const { name, value } = target;
     setFilter((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleButton = () => {
+    const newOptions = options.filter((opt) => opt !== filter.column);
+    setOptions(newOptions);
+    handleClick(filter);
   };
 
   return (
@@ -23,11 +35,11 @@ function FilterBar() {
         data-testid="column-filter"
         onChange={ handleChange }
       >
-        <option value="population">population</option>
-        <option value="orbital_period">orbital_period</option>
-        <option value="diameter">diameter</option>
-        <option value="rotation_period">rotation_period</option>
-        <option value="surface_water">surface_water</option>
+        { options.length !== 0 && (
+          options.map((opt) => (
+            <option key="opt" value={ opt }>{opt}</option>
+          ))
+        )}
       </select>
       <select
         data-testid="comparison-filter"
@@ -48,7 +60,7 @@ function FilterBar() {
       <button
         data-testid="button-filter"
         type="button"
-        onClick={ () => handleClick(filter) }
+        onClick={ handleButton }
       >
         Acionar Filtro
       </button>
