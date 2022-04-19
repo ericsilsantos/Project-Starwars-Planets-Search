@@ -7,6 +7,7 @@ function Provider({ children }) {
   const [data, setdata] = useState();
   const [renderData, setRenderData] = useState();
   const [loading, setLoading] = useState(true);
+  const [filterByNumericValues, setfilterByNumericValues] = useState([]);
 
   async function fetchData() {
     const results = await fetchAPI();
@@ -21,40 +22,46 @@ function Provider({ children }) {
 
   const handleChange = ({ target }) => {
     const { value } = target;
-    // console.log(value);
     const newData = data.filter((planet) => planet.name.includes(value));
     setRenderData(newData);
   };
 
   const handleClick = (filter) => {
-    // console.log(parseInt(data[0][filter.column]));
     let newData = {};
+    const dataToFilter = filterByNumericValues.length === 0 ? data : renderData;
+
     switch (filter.comparison) {
     case 'menor que': {
-      newData = data.filter((planet) => (
+      newData = dataToFilter.filter((planet) => (
         parseInt(planet[filter.column], 10) < parseInt(filter.value, 10)));
-      // setRenderData(newData);
       break;
     }
     case 'maior que': {
-      newData = data.filter((planet) => (
+      newData = dataToFilter.filter((planet) => (
         parseInt(planet[filter.column], 10) > parseInt(filter.value, 10)));
-      // setRenderData(newData);
       break;
     }
     case 'igual a': {
-      newData = data.filter((planet) => planet[filter.column] === filter.value);
-      // setRenderData(newData);
+      newData = dataToFilter.filter((planet) => planet[filter.column] === filter.value);
       break;
     }
     default:
       console.log('Erro');
     }
+
+    setfilterByNumericValues([...filterByNumericValues, filter]);
     setRenderData(newData);
   };
 
+  const value = {
+    renderData,
+    loading,
+    handleChange,
+    handleClick,
+    filterByNumericValues };
+
   return (
-    <Context.Provider value={ { renderData, loading, handleChange, handleClick } }>
+    <Context.Provider value={ value }>
       { children }
     </Context.Provider>
   );

@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import Context from '../context/StarwarsContext';
+import ListFilters from './ListFilters';
 
 function FilterBar() {
   const { handleClick } = useContext(Context);
@@ -51,6 +52,7 @@ function FilterBar() {
       >
         Acionar Filtro
       </button>
+      <ListFilters />
     </div>
   );
 }
