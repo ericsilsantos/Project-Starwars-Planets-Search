@@ -8,11 +8,21 @@ function Provider({ children }) {
   const [renderData, setRenderData] = useState();
   const [loading, setLoading] = useState(true);
   const [filterByNumericValues, setfilterByNumericValues] = useState([]);
+  const [options, setOptions] = useState([
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water']);
+  const [filter, setFilter] = useState({
+    column: 'population',
+    comparison: 'maior que',
+    value: 0,
+  });
 
   async function fetchData() {
     const results = await fetchAPI();
     setdata(results);
-    setRenderData(results);
     setLoading(false);
   }
 
@@ -20,45 +30,49 @@ function Provider({ children }) {
     fetchData();
   }, []);
 
-  const handleChange = ({ target }) => {
-    const { value } = target;
-    const newData = data.filter((planet) => planet.name.includes(value));
-    setRenderData(newData);
-  };
+  useEffect(() => {
+    let newData = [];
 
-  const handleClick = (filter) => {
-    let newData = {};
-    const dataToFilter = filterByNumericValues.length === 0 ? data : renderData;
-
-    switch (filter.comparison) {
-    case 'menor que': {
-      newData = dataToFilter.filter((planet) => (
-        parseInt(planet[filter.column], 10) < parseInt(filter.value, 10)));
-      break;
+    if (filterByNumericValues.length === 0) {
+      setRenderData(data);
+    } else {
+      filterByNumericValues.forEach((fil) => {
+        const dataToFilter = newData.length === 0 ? data : newData;
+        switch (fil.comparison) {
+        case 'menor que': {
+          newData = dataToFilter.filter((planet) => (
+            parseInt(planet[fil.column], 10) < parseInt(fil.value, 10)));
+          break;
+        }
+        case 'maior que': {
+          newData = dataToFilter.filter((planet) => (
+            parseInt(planet[fil.column], 10) > parseInt(fil.value, 10)));
+          break;
+        }
+        case 'igual a': {
+          newData = dataToFilter.filter((planet) => (
+            parseInt(planet[fil.column], 10) === parseInt(fil.value, 10)));
+          break;
+        }
+        default:
+          console.log('Erro');
+        }
+      });
+      setRenderData(newData);
     }
-    case 'maior que': {
-      newData = dataToFilter.filter((planet) => (
-        parseInt(planet[filter.column], 10) > parseInt(filter.value, 10)));
-      break;
-    }
-    case 'igual a': {
-      newData = dataToFilter.filter((planet) => planet[filter.column] === filter.value);
-      break;
-    }
-    default:
-      console.log('Erro');
-    }
-
-    setfilterByNumericValues([...filterByNumericValues, filter]);
-    setRenderData(newData);
-  };
+  }, [data, filterByNumericValues]);
 
   const value = {
+    data,
     renderData,
     loading,
-    handleChange,
-    handleClick,
-    filterByNumericValues };
+    filterByNumericValues,
+    setfilterByNumericValues,
+    setRenderData,
+    options,
+    setOptions,
+    filter,
+    setFilter };
 
   return (
     <Context.Provider value={ value }>
