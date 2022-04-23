@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import Context from '../context/StarwarsContext';
 import ListFilters from './ListFilters';
+import OrderBar from './OrderBar';
 
 function FilterBar() {
   const {
@@ -84,6 +85,7 @@ function FilterBar() {
       >
         Remover Filtros
       </button>
+      <OrderBar />
       <ListFilters />
     </div>
   );

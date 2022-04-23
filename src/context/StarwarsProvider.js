@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import Context from './StarwarsContext';
 import fetchAPI from '../services/fetchAPI';
 
+const NEGATIVO = -1;
+const POSITIVO = 1;
+
 function Provider({ children }) {
   const [data, setdata] = useState();
   const [renderData, setRenderData] = useState();
@@ -19,10 +22,15 @@ function Provider({ children }) {
     comparison: 'maior que',
     value: 0,
   });
+  const [order, setOrder] = useState();
 
   async function fetchData() {
     const results = await fetchAPI();
-    setdata(results);
+    setdata(results.sort((a, b) => {
+      if (a.name > b.name) return POSITIVO;
+      if (a.name < b.name) return NEGATIVO;
+      return 0;
+    }));
     setLoading(false);
   }
 
@@ -62,6 +70,20 @@ function Provider({ children }) {
     }
   }, [data, filterByNumericValues]);
 
+  // useEffect(() => {
+  //   let newData = [];
+
+  //   if (order) {
+  //     if (order.sort === 'ASC') {
+  //       newData = renderData.sort((a, b) => a[order.column] - b[order.column]);
+  //     } else if (order.sort === 'DESC') {
+  //       newData = renderData.sort((a, b) => b[order.column] - a[order.column]);
+  //     }
+  //     setRenderData(newData);
+  //     console.log(renderData);
+  //   }
+  // }, [renderData, order]);
+
   const value = {
     data,
     renderData,
@@ -72,7 +94,9 @@ function Provider({ children }) {
     options,
     setOptions,
     filter,
-    setFilter };
+    setFilter,
+    order,
+    setOrder };
 
   return (
     <Context.Provider value={ value }>
